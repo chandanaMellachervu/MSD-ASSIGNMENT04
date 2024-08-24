@@ -76,3 +76,34 @@ filterBtns.forEach(btn => {
         renderTasks(filter);
     });
 });
+function renderTasks(filter = 'all') {
+    taskList.innerHTML = '';
+    let filteredTasks = tasks;
+    if (filter === 'completed') {
+        filteredTasks = tasks.filter(task => task.completed);
+    } else if (filter === 'pending') {
+        filteredTasks = tasks.filter(task => !task.completed);
+    }
+
+    filteredTasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = task.completed ? 'completed' : '';
+        li.innerHTML = `
+            <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTaskCompletion(${task.id}, event)">
+            <span>${task.text}</span>
+            <div>
+                <button class="edit-btn" onclick="editTask(${task.id}, event)">Edit</button>
+                <button class="delete-btn" onclick="deleteTask(${task.id}, event)">Delete</button>
+            </div>
+        `;
+        taskList.appendChild(li);
+    });
+}
+
+function toggleTaskCompletion(id, event) {
+    event.stopPropagation();  
+    tasks = tasks.map(task =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    renderTasks();
+}
